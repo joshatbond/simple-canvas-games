@@ -1,7 +1,18 @@
 ---
+import Card from '../components/card.astro'
 import Layout from '../layouts/Layout.astro'
 ---
 
-<Layout>
-  <p>Site is working</p>
+<Layout
+  title='Games'
+  description='A collection of simple canvas games and other interactive projects.'
+>
+  <main
+    class='flex max-w-screen-xl flex-wrap items-center justify-center gap-4 px-4'
+  >
+    <Card title='2048' url='/2048' />
+    <Card title='Minesweeper' url='/minesweeper' />
+    <Card title='Smart Rockets' url='/smart-rockets' />
+    <Card title='Snake Game' url='/snake' />
+  </main>
 </Layout>

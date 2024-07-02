@@ -1,0 +1,23 @@
+---
+type Props = { imageURL?: string; title: string; url: string }
+
+const { imageURL, title, url } = Astro.props
+---
+
+<a href={url}>
+  <div class='min-w-[250px] space-y-4 rounded bg-white/10 p-4'>
+    <div class='relative min-h-[200px] rounded-t bg-white/10'>
+      {
+        imageURL && (
+          <img
+            src={imageURL}
+            alt={title}
+            class='absolute inset-0 block object-cover'
+          />
+        )
+      }
+    </div>
+
+    <p class='cursor-pointer text-right underline'>{title}</p>
+  </div>
+</a>
