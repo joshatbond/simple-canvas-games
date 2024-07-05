@@ -219,7 +219,7 @@ export class Game {
         if (cellValue > 0) {
           this.canvas.textAlign = 'center'
           this.canvas.fillStyle = '#fff'
-          this.canvas.font = 'bold 16px sans-serif'
+          this.canvas.font = 'bold 2rem sans-serif'
           this.canvas.fillText(
             cellValue.toString(),
             row * w + w / 2,
