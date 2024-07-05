@@ -205,34 +205,6 @@ export class Game {
   }
 
   /**
-   * @description Draws the gameboard to the canvas
-   */
-  private _drawGrid() {
-    let w = 100
-    for (let row = 0; row < this.gameboard.length; row++) {
-      for (let col = 0; col < this.gameboard[row].length; col++) {
-        const cellValue = this.gameboard[row][col]
-        this.canvas.fillStyle = 'transparent'
-        this.canvas.lineWidth = 2
-        this.canvas.strokeStyle = '#fff'
-        this.canvas.rect(row * w, col * w, w, w)
-        this.canvas.stroke()
-
-        if (cellValue > 0) {
-          this.canvas.textAlign = 'center'
-          this.canvas.fillStyle = '#fff'
-          this.canvas.font = 'bold 2rem sans-serif'
-          this.canvas.fillText(
-            cellValue.toString(),
-            row * w + w / 2,
-            col * w + w / 2
-          )
-        }
-      }
-    }
-  }
-
-  /**
    * @description Updates the canvas with the current gameboard when the gameboard changes
    */
   private _updateCanvas() {
@@ -250,7 +222,7 @@ export class Game {
       this.canvas.canvas.height
     )
 
-    this._drawGrid()
+    this.grid.render(this.canvas)
     this.scoreElement.innerText = this.score.toString()
   }
 }
