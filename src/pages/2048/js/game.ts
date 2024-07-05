@@ -1,10 +1,12 @@
 import { Grid } from './grid'
 
 export class Game {
+  // render concerns
   private canvas: CanvasRenderingContext2D
   private gameElement: HTMLButtonElement
   private statusElement: HTMLElement
   private scoreElement: HTMLElement
+  //game state
   private inGame: boolean
   private gameWon: boolean
   private rowLength: number
