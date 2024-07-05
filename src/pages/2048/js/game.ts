@@ -10,7 +10,7 @@ export class Game {
   private inGame: boolean
   private gameWon: boolean
   private rowLength: number
-  private score: number
+  private _score: number
   private grid: Grid
   private gameboard: number[][] = []
 
@@ -35,14 +35,18 @@ export class Game {
     this.inGame = false
     this.gameWon = false
     this.rowLength = 4
-    this.score = 0
-    this.grid = new Grid(this.rowLength)
+    this._score = 0
+    this.grid = new Grid(this.rowLength, this)
+  }
+
+  set score(value: number) {
+    this._score = value
   }
 
   public newGame() {
     this.gameElement.innerText = 'Playing...'
     this.statusElement.classList.toggle('hidden', true)
-    this.grid = new Grid(this.rowLength)
+    this.grid = new Grid(this.rowLength, this)
     this.grid.addNewTile()
     this.inGame = true
 
@@ -55,82 +59,23 @@ export class Game {
   public move(dir: 'down' | 'left' | 'right' | 'up') {
     if (!this.inGame) return
 
-    let undoReverse = false
-    let undoTranspose = false
+    this.grid.slideTiles(dir)
 
-    switch (dir) {
-      case 'up':
-        undoReverse = true
-        this.gameboard = this.grid.reverseGrid(this.gameboard)
-        break
-      case 'right':
-        undoTranspose = true
-        this.gameboard = this.grid.transposeGrid(this.gameboard)
-        break
-      case 'left':
-        undoReverse = true
-        undoTranspose = true
-        this.gameboard = this.grid.transposeGrid(this.gameboard)
-        this.gameboard = this.grid.reverseGrid(this.gameboard)
-        break
-      default:
-        break
+    if (this.grid.isDirty) {
+      this._updateCanvas()
+      this._isGameWon()
+      this._isGameOver()
     }
-
-    const previousBoard = this.grid.makeCopy(this.gameboard)
-    for (var row in this.gameboard) {
-      this.gameboard[row] = this._operate(this.gameboard[row])
-    }
-
-    const changed = this._compare(previousBoard, this.gameboard)
-    if (undoReverse) this.gameboard = this.grid.reverseGrid(this.gameboard)
-    if (undoTranspose) this.gameboard = this.grid.transposeGrid(this.gameboard)
-    if (changed) this.grid.addNewTile()
-
-    this._updateCanvas()
-    this._isGameWon()
-    this._isGameOver()
   }
 
-  /**
-   * @description Combines the first pair filled cells in the row, and adds the value to the score
-   * @param row The array to act upon
-   */
-  private _combine(row: number[]) {
-    for (let i = this.rowLength - 1; i > 0; i--) {
-      if (row[i] !== row[i - 1] || (row[i] === 0 && row[i - 1] === 0)) continue
-
-      row[i] = row[i] + row[i - 1]
-      row[i - 1] = 0
-
-      this.score += row[i]
-    }
-
-    return row
-  }
-  /**
-   * @description Compares two grids to see if they are the same
-   * @param board1 The first grid to compare
-   * @param board2 The second grid to compare
-   * @returns True if the grids are the same, false otherwise
-   */
-  private _compare(board1: number[][], board2: number[][]) {
-    for (const row in board1) {
-      for (const cell in board1[row]) {
-        if (board1[row][cell] !== board2[row][cell]) return true
-      }
-    }
-
-    return false
-  }
   /**
    * Update the DOM when the game is ended
    */
   private _gameDone() {
     this.statusElement.innerText = this.gameWon
-      ? `Congratulations! You won the game with a score of: ${this.score}`
+      ? `Congratulations! You won the game with a score of: ${this._score}`
       : 'Better luck next time'
-    this.score = 0
+    this._score = 0
 
     this.statusElement.classList.toggle('hidden', false)
     this.gameElement.innerText = 'Play Again?'
@@ -182,27 +127,6 @@ export class Game {
       this._gameDone()
     }
   }
-  /**
-   * @description Shifts all filled cells to the right, and combines the first pair of numbers
-   * @param row The gameboard row to operate on
-   * @returns
-   */
-  private _operate(row: number[]) {
-    row = this._slide(row)
-    row = this._combine(row)
-    row = this._slide(row)
-    return row
-  }
-  /**
-   * @description Slides all filled cells to the right
-   * @param row The array to act upon
-   * @returns
-   */
-  private _slide(row: number[]): number[] {
-    let slidRow = row.filter(Boolean)
-
-    return [...Array(this.rowLength - slidRow.length).fill(0), ...slidRow]
-  }
 
   /**
    * @description Updates the canvas with the current gameboard when the gameboard changes
@@ -223,6 +147,6 @@ export class Game {
     )
 
     this.grid.render(this.canvas)
-    this.scoreElement.innerText = this.score.toString()
+    this.scoreElement.innerText = this._score.toString()
   }
 }
