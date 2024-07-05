@@ -1,3 +1,4 @@
+import { BOARD_SPACING } from './app'
 import { Grid } from './grid'
 
 export class Game {
@@ -37,6 +38,7 @@ export class Game {
     this.rowLength = 4
     this._score = 0
     this.grid = new Grid({
+      boardSpacing: this.canvas.canvas.width * BOARD_SPACING,
       columnCount: this.rowLength,
       gameReference: this,
       rowCount: this.rowLength,
@@ -52,6 +54,7 @@ export class Game {
     this.gameElement.innerText = 'Playing...'
     this.statusElement.classList.toggle('hidden', true)
     this.grid = new Grid({
+      boardSpacing: this.canvas.canvas.width * BOARD_SPACING,
       columnCount: this.rowLength,
       gameReference: this,
       rowCount: this.rowLength,
@@ -113,13 +116,6 @@ export class Game {
    */
   private _updateCanvas() {
     this.canvas.clearRect(
-      0,
-      0,
-      this.canvas.canvas.width,
-      this.canvas.canvas.height
-    )
-    this.canvas.fillStyle = '#000'
-    this.canvas.fillRect(
       0,
       0,
       this.canvas.canvas.width,

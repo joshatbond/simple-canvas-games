@@ -1,5 +1,7 @@
 import { Game } from './game'
 
+export const BOARD_SPACING = 0.0315
+
 const buttonElement = document.getElementById('b1') as HTMLButtonElement | null
 const canvasParent = document.getElementById('sketch') as HTMLDivElement | null
 const mainElement = document.querySelector('main')

@@ -1,3 +1,4 @@
+import { BOARD_SPACING } from './app'
 import type { Game } from './game'
 
 export class Grid {
@@ -6,6 +7,8 @@ export class Grid {
   private _rowCount: number
   /** The number of columns in the grid */
   private _columnCount: number
+  /** The spacing between the tiles in the grid */
+  private _boardSpacing: number
   /** The game instance */
   private _game: Game
   /** An array that maps the grid to its transposition */
@@ -22,13 +25,15 @@ export class Grid {
   private _highestValue: number
 
   constructor({
-    rowCount,
+    boardSpacing,
     columnCount,
     gameReference,
+    rowCount,
   }: {
-    rowCount: number
+    boardSpacing: number
     columnCount: number
     gameReference: Game
+    rowCount: number
   }) {
     this._rowCount = rowCount
     this._columnCount = columnCount
@@ -37,6 +42,7 @@ export class Grid {
     this._isDirty = false
     this._hasMovesToMake = true
     this._highestValue = 0
+    this._boardSpacing = boardSpacing
     this._grid = new Array(rowCount * columnCount).fill(0)
     this._transpositionMap = this._createTranspositionMap(rowCount, columnCount)
   }
@@ -77,6 +83,7 @@ export class Grid {
    */
   public makeCopy() {
     const newGrid = new Grid({
+      boardSpacing: this._boardSpacing,
       columnCount: this._columnCount,
       gameReference: this._game,
       rowCount: this._rowCount,
@@ -92,25 +99,32 @@ export class Grid {
    * @param renderer The canvas context to draw to
    */
   public render(renderer: CanvasRenderingContext2D) {
-    const cellWidth = renderer.canvas.width / this._columnCount
-    const cellHeight = renderer.canvas.height / this._rowCount
+    this._boardSpacing = renderer.canvas.width * BOARD_SPACING
+    const offsetSpacing = (this._columnCount + 1) * this._boardSpacing
+    const cellWidth =
+      (renderer.canvas.width - offsetSpacing) / this._columnCount
+    const cellHeight = (renderer.canvas.height - offsetSpacing) / this._rowCount
 
     for (let index = 0; index < this._grid.length; index++) {
       const cellValue = this._grid[index]
-      const xPosition = (index % this._columnCount) * cellWidth
-      const yPosition = Math.floor(index / this._columnCount) * cellHeight
+      const xPosition =
+        (index % this._columnCount) * cellWidth +
+        ((index % this._columnCount) + 1) * this._boardSpacing
+      const yPosition =
+        Math.floor(index / this._columnCount) * cellHeight +
+        (Math.floor(index / this._columnCount) + 1) * this._boardSpacing
 
       // render the cell's border
-      renderer.fillStyle = 'transparent'
-      renderer.lineWidth = 2
-      renderer.strokeStyle = '#fff'
-      renderer.rect(xPosition, yPosition, cellWidth, cellHeight)
-      renderer.stroke()
+      // renderer.fillStyle = 'transparent'
+      // renderer.lineWidth = 2
+      // renderer.strokeStyle = '#fff'
+      // renderer.roundRect(xPosition, yPosition, cellWidth, cellHeight, 16)
+      // renderer.stroke()
 
       // render the cell's value
       if (cellValue > 0) {
         renderer.textAlign = 'center'
-        renderer.fillStyle = '#fff'
+        renderer.fillStyle = '#000'
         renderer.font = 'bold 2rem sans-serif'
         renderer.fillText(
           cellValue.toString(),
