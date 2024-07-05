@@ -42,6 +42,7 @@ export class Game {
     this.statusElement.classList.toggle('hidden', true)
     this.grid = new Grid(this.rowLength)
     this.gameboard = this.grid.addNew(this.grid.grid)
+    this.inGame = true
 
     this._updateCanvas()
   }
@@ -50,7 +51,7 @@ export class Game {
    * @param dir The direction to move the gameboard
    */
   public move(dir: 'down' | 'left' | 'right' | 'up') {
-    if (!this.inGame) this._gameDone()
+    if (!this.inGame) return
 
     let undoReverse = false
     let undoTranspose = false
@@ -149,21 +150,34 @@ export class Game {
   private _isGameOver() {
     let isGameOver = true
 
-    for (let row = 0; row < this.rowLength; row++) {
+    cellCheck: for (let row = 0; row < this.rowLength; row++) {
       for (let col = 0; col < this.gameboard[row].length; col++) {
+        console.log('cell position', row, col)
+        console.log(
+          'cell is empty',
+          row <= this.rowLength - 1 &&
+            this.gameboard[row][col] === this.gameboard[row + 1][col]
+        )
+        console.log('we can combine left/right', row !== this.rowLength - 1)
+        console.log(
+          'we can combine up/down',
+          col <= this.gameboard[row].length - 1 &&
+            this.gameboard[row][col] === this.gameboard[row][col + 1]
+        )
         if (
           this.gameboard[row][col] === 0 ||
-          (row !== this.rowLength - 1 &&
+          (row <= this.rowLength - 1 &&
             this.gameboard[row][col] === this.gameboard[row + 1][col]) ||
-          (col !== this.gameboard[row].length - 1 &&
+          (col <= this.gameboard[row].length - 1 &&
             this.gameboard[row][col] === this.gameboard[row][col + 1])
         ) {
           isGameOver = false
-          break
+          break cellCheck
         }
       }
     }
 
+    console.log('isGameOver', isGameOver)
     if (isGameOver) this.inGame = false
   }
   /**
