@@ -36,17 +36,26 @@ export class Game {
     this.gameWon = false
     this.rowLength = 4
     this._score = 0
-    this.grid = new Grid(this.rowLength, this)
+    this.grid = new Grid({
+      columnCount: this.rowLength,
+      gameReference: this,
+      rowCount: this.rowLength,
+    })
   }
 
-  set score(value: number) {
-    this._score = value
+  public setScore(value: number) {
+    console.log('setting score', value)
+    this._score += value
   }
 
   public newGame() {
     this.gameElement.innerText = 'Playing...'
     this.statusElement.classList.toggle('hidden', true)
-    this.grid = new Grid(this.rowLength, this)
+    this.grid = new Grid({
+      columnCount: this.rowLength,
+      gameReference: this,
+      rowCount: this.rowLength,
+    })
     this.grid.addNewTile()
     this.inGame = true
 
@@ -85,44 +94,15 @@ export class Game {
    * Checks to see if the game has been won
    */
   private _isGameWon() {
-    for (const row in this.gameboard) {
-      for (const cell in this.gameboard[row]) {
-        if (this.gameboard[row][cell] === 2048) this.gameWon = true
-      }
+    if (this.grid.highestValue === 2048) {
+      this.gameWon = true
     }
   }
   /**
    * Checks to see if the gameboard has any moves left
    */
   private _isGameOver() {
-    let isGameOver = true,
-      cellValue = -1,
-      isLastRow = false,
-      isLastCol = false,
-      nextRowValue = -1,
-      nextColValue = -1
-
-    cellCheck: for (let row = 0; row < this.rowLength; row++) {
-      for (let col = 0; col < this.gameboard[row].length; col++) {
-        cellValue = this.gameboard[row][col]
-        isLastRow = row === this.rowLength - 1
-        isLastCol = col === this.gameboard[row].length - 1
-        nextRowValue = isLastRow ? -1 : this.gameboard[row + 1][col]
-        nextColValue = isLastCol ? -1 : this.gameboard[row][col + 1]
-
-        if (
-          cellValue === 0 ||
-          (!isLastRow && cellValue === nextRowValue) ||
-          (!isLastCol && cellValue === nextColValue)
-        ) {
-          isGameOver = false
-          break cellCheck
-        }
-      }
-    }
-
-    if (isGameOver) {
-      console.log('game over')
+    if (!this.grid.hasMovesToMake) {
       this.inGame = false
       this._gameDone()
     }
