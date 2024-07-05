@@ -3,18 +3,20 @@ import Layout from '../../layouts/Layout.astro'
 ---
 
 <Layout title='Games | 2048' description='A 2048 clone.'>
-  <main>
+  <main class='flex flex-col items-center gap-4 self-stretch text-lg'>
     <div id='sketch' class='flex items-center justify-center'></div>
 
-    <h1 id='status' class='hidden'>Game Over</h1>
+    <h1 id='status' class='hidden text-center'>Game Over</h1>
 
-    <div class='flex items-center justify-center'>
+    <div class='flex min-w-24 items-center justify-between gap-2'>
       <span>Score:</span>
       <span id='score'>0</span>
     </div>
 
-    <div class='flex items-center justify-center'>
-      <button id='b1'>New Game</button>
+    <div class='flex min-w-24 items-center justify-center'>
+      <button id='b1' class='rounded bg-neutral-300 px-3 py-1 text-neutral-900'>
+        New Game
+      </button>
     </div>
   </main>
 
