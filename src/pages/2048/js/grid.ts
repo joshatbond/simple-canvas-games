@@ -7,23 +7,21 @@ export class Grid {
       .map(() => new Array(rowLength).fill(0))
   }
 
-  public addNewTile(grid: number[][]) {
+  public addNewTile() {
     const options: { x: number; y: number }[] = []
 
-    for (let row = 0; row < grid.length; row++) {
-      for (let cell = 0; cell < grid[row].length; cell++) {
-        if (grid[row][cell] === 0) {
+    for (let row = 0; row < this.grid.length; row++) {
+      for (let cell = 0; cell < this.grid[row].length; cell++) {
+        if (this.grid[row][cell] === 0) {
           options.push({ x: row, y: cell })
         }
       }
     }
 
-    if (options.length === 0) return grid
+    if (options.length === 0) return this.grid
 
     const spot = options[Math.floor(Math.random() * options.length)]
-    grid[spot.x][spot.y] = Math.random() > 0.1 ? 2 : 4
-
-    return grid
+    this.grid[spot.x][spot.y] = Math.random() > 0.1 ? 2 : 4
   }
 
   public makeCopy(grid: number[][]) {
