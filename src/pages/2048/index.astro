@@ -3,21 +3,43 @@ import Layout from '../../layouts/Layout.astro'
 ---
 
 <Layout title='Games | 2048' description='A 2048 clone.'>
-  <main class='flex flex-col items-center gap-4 self-stretch text-lg'>
-    <div id='sketch' class='flex items-center justify-center'></div>
+  <main
+    class='flex h-[calc(100vh-64px)] justify-between text-lg transition-opacity duration-300 [--container-width:0px]'
+  >
+    <div></div>
 
-    <h1 id='status' class='hidden text-center'>Game Over</h1>
+    <div
+      class='flex max-h-full max-w-screen-lg flex-1 flex-col items-center p-4'
+    >
+      <div id='sketch' class='relative flex-1 overflow-hidden rounded-lg'>
+        <img
+          alt=''
+          class='max-h-full max-w-full'
+          id='bgImage'
+          role='presentation'
+        />
+      </div>
 
-    <div class='flex min-w-24 items-center justify-between gap-2'>
-      <span>Score:</span>
-      <span id='score'>0</span>
+      <div
+        class='flex w-[--container-width] flex-shrink-0 flex-col items-center space-y-4 p-4'
+      >
+        <h1 id='status' class='hidden min-w-48 text-center'>Game Over</h1>
+
+        <div class='flex min-w-48 justify-between gap-2'>
+          <span>Score:</span>
+          <span id='score'>0</span>
+        </div>
+
+        <button
+          id='b1'
+          class='min-w-48 rounded bg-neutral-300 px-3 py-1 text-neutral-900'
+        >
+          New Game
+        </button>
+      </div>
     </div>
 
-    <div class='flex min-w-24 items-center justify-center'>
-      <button id='b1' class='rounded bg-neutral-300 px-3 py-1 text-neutral-900'>
-        New Game
-      </button>
-    </div>
+    <div></div>
   </main>
 
   <script src='./js/app.ts'></script>

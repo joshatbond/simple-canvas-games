@@ -1,20 +1,30 @@
 import { Game } from './game'
 
 const buttonElement = document.getElementById('b1') as HTMLButtonElement | null
+const canvasParent = document.getElementById('sketch') as HTMLDivElement | null
+const mainElement = document.querySelector('main')
+const imageElement = document.getElementById(
+  'bgImage'
+) as HTMLImageElement | null
 const scoreElement = document.getElementById('score') as HTMLSpanElement | null
 const statusElement = document.getElementById(
   'status'
 ) as HTMLHeadingElement | null
-const canvasParent = document.getElementById('sketch') as HTMLDivElement | null
 
 if (!buttonElement) throw new Error('button not found')
 if (!canvasParent) throw new Error('sketch not found')
+if (!imageElement) throw new Error('image not found')
+if (!mainElement) throw new Error('main not found')
 if (!scoreElement) throw new Error('score not found')
 if (!statusElement) throw new Error('disp not found')
 
+mainElement.style.opacity = '0'
+
 const canvas = document.createElement('canvas')
-canvas.width = 400
-canvas.height = 400
+canvas.width = canvasParent.children[0].clientWidth
+canvas.height = canvasParent.children[0].clientHeight
+canvas.style.position = 'absolute'
+canvas.style.inset = '0'
 canvasParent.appendChild(canvas)
 
 const game = new Game(statusElement, scoreElement, buttonElement)
@@ -23,6 +33,22 @@ buttonElement.addEventListener('click', () => {
   buttonElement.disabled = true
   game.newGame()
 })
+imageElement.addEventListener('load', () => {
+  mainElement.style.setProperty(
+    '--container-width',
+    `${imageElement.clientWidth}px`
+  )
+  mainElement.style.opacity = '1'
+})
+imageElement.src = '/assets/game_bg.jpg'
+
+const resizeObserver = new ResizeObserver(() => {
+  const { width, height } = imageElement.getBoundingClientRect()
+  mainElement.style.setProperty('--container-width', `${width}px`)
+  canvas.width = width
+  canvas.height = height
+})
+resizeObserver.observe(imageElement)
 
 window.addEventListener('touchstart', touchStarted)
 window.addEventListener('touchend', touchEnded)
