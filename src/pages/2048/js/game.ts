@@ -148,28 +148,25 @@ export class Game {
    * Checks to see if the gameboard has any moves left
    */
   private _isGameOver() {
-    let isGameOver = true
+    let isGameOver = true,
+      cellValue = -1,
+      isLastRow = false,
+      isLastCol = false,
+      nextRowValue = -1,
+      nextColValue = -1
 
     cellCheck: for (let row = 0; row < this.rowLength; row++) {
       for (let col = 0; col < this.gameboard[row].length; col++) {
-        console.log('cell position', row, col)
-        console.log(
-          'cell is empty',
-          row <= this.rowLength - 1 &&
-            this.gameboard[row][col] === this.gameboard[row + 1][col]
-        )
-        console.log('we can combine left/right', row !== this.rowLength - 1)
-        console.log(
-          'we can combine up/down',
-          col <= this.gameboard[row].length - 1 &&
-            this.gameboard[row][col] === this.gameboard[row][col + 1]
-        )
+        cellValue = this.gameboard[row][col]
+        isLastRow = row === this.rowLength - 1
+        isLastCol = col === this.gameboard[row].length - 1
+        nextRowValue = isLastRow ? -1 : this.gameboard[row + 1][col]
+        nextColValue = isLastCol ? -1 : this.gameboard[row][col + 1]
+
         if (
-          this.gameboard[row][col] === 0 ||
-          (row <= this.rowLength - 1 &&
-            this.gameboard[row][col] === this.gameboard[row + 1][col]) ||
-          (col <= this.gameboard[row].length - 1 &&
-            this.gameboard[row][col] === this.gameboard[row][col + 1])
+          cellValue === 0 ||
+          (!isLastRow && cellValue === nextRowValue) ||
+          (!isLastCol && cellValue === nextColValue)
         ) {
           isGameOver = false
           break cellCheck
@@ -177,8 +174,11 @@ export class Game {
       }
     }
 
-    console.log('isGameOver', isGameOver)
-    if (isGameOver) this.inGame = false
+    if (isGameOver) {
+      console.log('game over')
+      this.inGame = false
+      this._gameDone()
+    }
   }
   /**
    * @description Shifts all filled cells to the right, and combines the first pair of numbers
