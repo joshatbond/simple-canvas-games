@@ -41,7 +41,7 @@ export class Game {
     this.gameElement.innerText = 'Playing...'
     this.statusElement.classList.toggle('hidden', true)
     this.grid = new Grid(this.rowLength)
-    this.gameboard = this.grid.addNew(this.grid.grid)
+    this.gameboard = this.grid.addNewTile(this.grid.grid)
     this.inGame = true
 
     this._updateCanvas()
@@ -83,7 +83,7 @@ export class Game {
     const changed = this._compare(previousBoard, this.gameboard)
     if (undoReverse) this.gameboard = this.grid.reverseGrid(this.gameboard)
     if (undoTranspose) this.gameboard = this.grid.transposeGrid(this.gameboard)
-    if (changed) this.gameboard = this.grid.addNew(this.gameboard)
+    if (changed) this.gameboard = this.grid.addNewTile(this.gameboard)
 
     this._updateCanvas()
     this._isGameWon()

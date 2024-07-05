@@ -7,7 +7,7 @@ export class Grid {
       .map(() => new Array(rowLength).fill(0))
   }
 
-  public addNew(grid: number[][]) {
+  public addNewTile(grid: number[][]) {
     const options: { x: number; y: number }[] = []
 
     for (let row = 0; row < grid.length; row++) {
