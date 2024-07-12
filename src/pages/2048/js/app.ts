@@ -1,7 +1,5 @@
 import { Game } from './game'
 
-export const BOARD_SPACING = 0.0315
-
 const buttonElement = document.getElementById('b1') as HTMLButtonElement | null
 const canvasParent = document.getElementById('sketch') as HTMLDivElement | null
 const mainElement = document.querySelector('main')
@@ -23,13 +21,17 @@ if (!statusElement) throw new Error('disp not found')
 mainElement.style.opacity = '0'
 
 const canvas = document.createElement('canvas')
+const canvasContext = canvas.getContext('2d')
 canvas.width = canvasParent.children[0].clientWidth
 canvas.height = canvasParent.children[0].clientHeight
 canvas.style.position = 'absolute'
 canvas.style.inset = '0'
 canvasParent.appendChild(canvas)
 
-const game = new Game(statusElement, scoreElement, buttonElement)
+if (!canvasContext) throw new Error('canvas context not found')
+
+// const game = new Game(statusElement, scoreElement, buttonElement)
+const game = new Game(canvasContext)
 
 buttonElement.addEventListener('click', () => {
   buttonElement.disabled = true
@@ -49,6 +51,7 @@ const resizeObserver = new ResizeObserver(() => {
   mainElement.style.setProperty('--container-width', `${width}px`)
   canvas.width = width
   canvas.height = height
+  game.resize()
 })
 resizeObserver.observe(imageElement)
 
