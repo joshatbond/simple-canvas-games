@@ -15,7 +15,6 @@ export class Board {
     isEmpty: boolean
   }[]
   isDirty: boolean
-  isFilled: boolean
 
   constructor(gridSize: number, renderer: CanvasRenderingContext2D) {
     this.#gridSize = gridSize
@@ -23,8 +22,15 @@ export class Board {
     this.#padding = this.#calculatePadding()
     this.#positions = this.#createPositions()
     this.#tiles = []
-    this.isDirty = false
-    this.isFilled = false
+    this.isDirty = true
+  }
+
+  // TODO: This is incomplete, it's currently only checking if all tiles are empty, not if there is a move left to make
+  get isFilled() {
+    return (
+      this.#tiles.length === this.#positions.length &&
+      this.#tiles.every(tile => !tile.isDirty)
+    )
   }
 
   addTile() {
@@ -32,7 +38,6 @@ export class Board {
       position => position.isEmpty
     )
     if (availablePositions.length === 0) {
-      this.isFilled = true
       return
     }
 
@@ -77,10 +82,6 @@ export class Board {
   update(dt: number) {
     for (const tile of this.#tiles) {
       tile.update(dt)
-
-      if (!this.isDirty && tile.isDirty) {
-        this.isDirty = true
-      }
     }
   }
   resize() {
