@@ -10,7 +10,8 @@ export class Tile {
   #height: number
   destination: { x: number; y: number } | null
   #animationDuration = 0.2
-  isDirty: boolean
+  #isMoving: boolean
+  #isColorChanging: boolean
   color: string
 
   constructor(
@@ -26,8 +27,13 @@ export class Tile {
     this.#height = height
     this.#value = value
     this.destination = { x, y }
-    this.isDirty = false
+    this.#isMoving = false
+    this.#isColorChanging = false
     this.color = colors.LATEST
+  }
+
+  get isDirty() {
+    return this.#isMoving || this.#isColorChanging
   }
 
   set width(size: number) {
@@ -46,13 +52,13 @@ export class Tile {
   resize(width: number, height: number) {
     this.#width = width
     this.#height = height
-    this.isDirty = true
+    this.#isMoving = true
   }
 
   update(dt: number) {
     // just initialized
     if (this.x === -1 && this.y === -1) {
-      this.isDirty = true
+      this.#isColorChanging = true
       this.x = this.destination!.x
       this.y = this.destination!.y
       this.destination = null
@@ -60,18 +66,15 @@ export class Tile {
         color: colors.FILLED,
         duration: 1.5,
         ease: 'expo.in',
-        onUpdate: () => {
-          this.isDirty = true
-        },
         onComplete: () => {
-          this.isDirty = false
+          this.#isColorChanging = false
         },
       })
       return
     }
     // we're moving
     if (this.destination) {
-      this.isDirty = true
+      this.#isMoving = true
 
       if (this.destination.x !== this.x) {
         gsap.to(this, {
@@ -80,7 +83,7 @@ export class Tile {
           ease: 'power3.in',
           onComplete: () => {
             this.destination = null
-            this.isDirty = false
+            this.#isMoving = false
           },
         })
       }
@@ -91,7 +94,7 @@ export class Tile {
           ease: 'power3.in',
           onComplete: () => {
             this.destination = null
-            this.isDirty = false
+            this.#isMoving = false
           },
         })
       }
