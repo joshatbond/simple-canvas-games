@@ -60,6 +60,12 @@ export class Tile {
         color: colors.FILLED,
         duration: 1.5,
         ease: 'expo.in',
+        onUpdate: () => {
+          this.isDirty = true
+        },
+        onComplete: () => {
+          this.isDirty = false
+        },
       })
       return
     }
@@ -74,6 +80,7 @@ export class Tile {
           ease: 'power3.in',
           onComplete: () => {
             this.destination = null
+            this.isDirty = false
           },
         })
       }
@@ -84,18 +91,12 @@ export class Tile {
           ease: 'power3.in',
           onComplete: () => {
             this.destination = null
+            this.isDirty = false
           },
         })
       }
       return
     }
-    // we have a color change
-    if (![colors.HIGHEST, colors.EMPTY].includes(this.color)) {
-      this.isDirty = true
-      return
-    }
-
-    this.isDirty = false
   }
   draw(renderer: CanvasRenderingContext2D) {
     renderer.beginPath()
