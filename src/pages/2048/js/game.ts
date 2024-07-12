@@ -5,15 +5,18 @@ export class Game {
   renderer: CanvasRenderingContext2D
   lastTimestamp?: number
   #animating: boolean
+  #inGame: boolean
 
   constructor(renderer: CanvasRenderingContext2D) {
     this.board = new Board(4, renderer)
     this.renderer = renderer
     this.#animating = false
+    this.#inGame = false
   }
 
   newGame() {
     this.lastTimestamp = performance.now()
+    this.#inGame = true
     this.board.addTile()
     this.gameLoop(performance.now())
   }
@@ -35,7 +38,9 @@ export class Game {
       this.draw()
     }
 
-    requestAnimationFrame(this.gameLoop.bind(this))
+    if (this.#inGame) {
+      requestAnimationFrame(this.gameLoop.bind(this))
+    }
   }
 
   draw() {
@@ -44,6 +49,10 @@ export class Game {
   }
   move(s: string) {}
   update(dt: number) {
+    if (this.board.isFilled) {
+      this.#inGame = false
+      return
+    }
     this.board.update(dt)
 
     if (this.board.isDirty) {
