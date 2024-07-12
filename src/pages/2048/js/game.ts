@@ -47,7 +47,11 @@ export class Game {
     this.board.draw(this.renderer)
     this.#animating = false
   }
-  move(s: string) {}
+  move(s: 'up' | 'down' | 'left' | 'right') {
+    if (!this.#inGame || this.#animating) return
+
+    this.board[s]()
+  }
   update(dt: number) {
     if (this.board.isFilled) {
       this.#inGame = false
