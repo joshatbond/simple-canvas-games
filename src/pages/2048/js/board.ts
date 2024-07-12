@@ -15,6 +15,7 @@ export class Board {
     isEmpty: boolean
   }[]
   isDirty: boolean
+  isFilled: boolean
 
   constructor(gridSize: number, renderer: CanvasRenderingContext2D) {
     this.#gridSize = gridSize
@@ -23,14 +24,17 @@ export class Board {
     this.#positions = this.#createPositions()
     this.#tiles = []
     this.isDirty = false
+    this.isFilled = false
   }
 
   addTile() {
     const availablePositions = this.#positions.filter(
       position => position.isEmpty
     )
-    // TODO: This could be a place where we could end the game?
-    if (availablePositions.length === 0) return
+    if (availablePositions.length === 0) {
+      this.isFilled = true
+      return
+    }
 
     const position =
       availablePositions[Math.floor(Math.random() * availablePositions.length)]
